@@ -29,3 +29,17 @@ It is still at an early development stage!
 4. cd windows
 5. cmake -G "Visual Studio 16 2019" ../../
 
+## Thirdparty Library
+
+Library                                     | Functionality         
+------------------------------------------  | -------------
+[assimp](https://github.com/assimp/assimp)  | Mesh Loading And Pre Processing
+[glfw](https://github.com/glfw/glfw)        | Windowing And Input Handling
+[glm](https://github.com/g-truc/glm)        | Mathematics
+[imgui](https://github.com/ocornut/imgui)    | GUI
+[ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo)    | Guizmo
+[spdlog](https://github.com/gabime/spdlog)   | Debug Logging
+[glad](https://github.com/Dav1dde/glad)   | OpenGL Loader
+
+
+
