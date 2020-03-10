@@ -9,7 +9,7 @@ It is still at an early development stage!
 1. Deferred-Forward Mixed Shading Pipeline
 2. Use Command Buffer To Manage Rendering Process
 3. Screen Space Reflection(Early Stage, WIP)
-4. Post Processing(Tonemapping And Vignette Onely, Early Stage, WIP) 
+4. Post Processing(Tonemapping And Vignette Only, Early Stage, WIP) 
 5. Data Driven Design
 6. Shadow Mapping
 7. Editor(WIP)
