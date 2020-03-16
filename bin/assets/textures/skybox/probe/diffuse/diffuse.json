@@ -1,0 +1,13 @@
+{
+    "type": "textureCubeMap",
+    "mipmap": true,
+    "paths": 
+    [
+        "skybox/probe/diffuse/diffuse_right_0.hdr",
+        "skybox/probe/diffuse/diffuse_left_0.hdr",
+        "skybox/probe/diffuse/diffuse_top_0.hdr",
+        "skybox/probe/diffuse/diffuse_bottom_0.hdr",
+        "skybox/probe/diffuse/diffuse_front_0.hdr",
+        "skybox/probe/diffuse/diffuse_back_0.hdr"
+    ]
+}

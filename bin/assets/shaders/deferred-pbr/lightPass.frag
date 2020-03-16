@@ -9,6 +9,8 @@ uniform sampler2D gBufferPosition;
 uniform sampler2D gBufferNormalMetalness;
 uniform sampler2D gBufferAlbedoRoughness;
 
+uniform samplerCube radianceMap;
+
 uniform mat4 invView;
 
 struct Light
@@ -125,48 +127,48 @@ void main()
                    
                     if(!DetectShadow(worldPos, shadowMapUV, i))
                     {
-                        lightFactor += 0.60;
+                        lightFactor += 1.00;
                     }
 
-                    if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVUp, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVUp, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
-                    if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVUp, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVUp, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
-                    if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVRight, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVRight, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
-                    if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVRight, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVRight, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
-                    if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVRight + shadowMapUVUp, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVRight + shadowMapUVUp, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
-                    if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVRight - shadowMapUVUp, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV + shadowMapUVRight - shadowMapUVUp, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
-                    if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVRight + shadowMapUVUp, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVRight + shadowMapUVUp, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
-                    if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVRight - shadowMapUVUp, i))
-                    {
-                        lightFactor += 0.05;
-                    }
+                    // if(!DetectShadow(worldPos, shadowMapUV - shadowMapUVRight - shadowMapUVUp, i))
+                    // {
+                    //     lightFactor += 0.05;
+                    // }
 
                     lightIntensity = lightFactor * lightIntensity;
                     // if(shadowMapUV.x > 0.0 && shadowMapUV.x < 1.0 && shadowMapUV.y > 0.0 && shadowMapUV.y < 1.0)
@@ -190,7 +192,8 @@ void main()
         }
     }
 
-    vec3 result = colorFactor * (lambert + specular);
+    vec3 environmentLight = albedo * texture(radianceMap ,N).rgb / PI;
+    vec3 result = environmentLight + colorFactor * (lambert + specular);
 
     outColor = vec4(result, 1.0);
 }

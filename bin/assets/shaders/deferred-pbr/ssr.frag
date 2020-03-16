@@ -10,7 +10,7 @@ uniform sampler2D gBufferNormalMetalness;
 uniform sampler2D gBufferAlbedoRoughness;
 // SSR Combine Pass
 uniform sampler2D ssrCombine;
-uniform samplerCube radianceMap;
+uniform samplerCube iradianceMap;
 
 // uniform mat4 view;
 uniform mat4 invView;
@@ -131,32 +131,33 @@ void main()
     vec3 R = normalize(reflect(-V, N));
     vec3 worldR = mat3(invView) * R;
 
-    // Do Ray Cast
-    vec3 origin = position;
-    // Perfect Reflection
-    vec3 dir = R;
-    vec3 hitPos;
-
     vec3 result = vec3(0.0, 0.0, 0.0);
-
-    if (RayCast(origin, dir, hitPos, 0.4, 48, 8))
+    // reflection raytracing
     {
-        vec2 screenSpaceHitPos = ViewSpaceToScreenSpace(hitPos);
-        if(screenSpaceHitPos.x > 0.0 && screenSpaceHitPos.x < 1.0 && screenSpaceHitPos.y > 0.0 && screenSpaceHitPos.y < 1.0)
+        // Do Ray Cast
+        vec3 origin = position;
+        // Perfect Reflection
+        vec3 dir = R;
+        vec3 hitPos;
+
+        if (RayCast(origin, dir, hitPos, 0.4, 48, 8))
         {
-            result += 0.2 * texture(ssrCombine, screenSpaceHitPos).rgb;
+            vec2 screenSpaceHitPos = ViewSpaceToScreenSpace(hitPos);
+            if(screenSpaceHitPos.x > 0.0 && screenSpaceHitPos.x < 1.0 && screenSpaceHitPos.y > 0.0 && screenSpaceHitPos.y < 1.0)
+            {
+                result += 0.2 * texture(ssrCombine, screenSpaceHitPos).rgb;
+            }
+            else
+            {
+                result += 1.0 * texture(iradianceMap, worldR).rgb;
+            }
         }
+        // Fallback To Radiance Map
         else
         {
-            result += 1.0 * texture(radianceMap, worldR).rgb;
+            result += 1.0 * texture(iradianceMap, worldR).rgb;
         }
     }
-    // Fallback To Radiance Map
-    else
-    {
-        result += 1.0 * texture(radianceMap, worldR).rgb;
-    }
-
     // result = vec3(fragUV, 0.0);
     // result = vec3(thickness, 0, 0);
     // result = vec3(ViewSpaceToScreenSpace(position), 0.0);

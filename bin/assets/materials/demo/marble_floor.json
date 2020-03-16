@@ -27,12 +27,12 @@
         {
             "name": "tillingX",
             "type": "float",
-            "value": 8.0
+            "value": 80.0
         },
         {
             "name": "tillingY",
             "type": "float",
-            "value": 8.0
+            "value": 80.0
         }
     ],
     "extensions":

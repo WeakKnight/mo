@@ -7,7 +7,7 @@
         {
             "name": "skybox",
             "type": "samplerCube",
-            "value": "skybox/skybox.json"
+            "value": "skybox/probe/specular/specular0.json"
         }
     ],
     "extensions":

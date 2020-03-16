@@ -35,7 +35,7 @@
             "transform":
             {
                 "position":[0.0, -2.571, 0],
-                "scale":[20, 20, 1],
+                "scale":[200, 200, 1],
                 "rotation":[-90.0, 0.0, 0.0]
             },
             "components":

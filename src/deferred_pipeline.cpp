@@ -93,7 +93,8 @@ void DeferredPipeline::Init(Camera* camera)
 	backFacePass = new RenderTarget(this->camera->GetRenderTarget()->GetSize().x, this->camera->GetRenderTarget()->GetSize().y, backFacePassDescriptors);
 
 	// TODO should use render target to generate radiance map
-	radianceMap = Resources::GetTexture("skybox/skybox.json");
+	radianceMap = Resources::GetTexture("skybox/probe/diffuse/diffuse.json");
+	iradianceMap = Resources::GetTexture("skybox/probe/specular/specular0.json");
 }
 
 void DeferredPipeline::Resize(const glm::vec2& size)
@@ -412,6 +413,7 @@ void DeferredPipeline::RenderDeferredPass()
 		lightPassMaterial->SetVector3("lights[" + std::to_string(index) + "].SpotDir", glm::vec3(0.0f));
 	}
 
+	lightPassMaterial->SetTextureProperty("radianceMap", radianceMap);
 	lightPassMaterial->SetMatrix4("invView", invView);
 
 	cb->DisableCullFace();
@@ -428,7 +430,7 @@ void DeferredPipeline::RenderDeferredPass()
 	ssrMaterial->SetTextureProperty("gBufferAlbedoRoughness", GetAlbedoRoughnessTexture());
 	// SSR Combine Pass Uniform
 	ssrMaterial->SetTextureProperty("ssrCombine", ssrCombinePass->GetAttachmentTexture(0));
-	ssrMaterial->SetTextureProperty("radianceMap", radianceMap);
+	ssrMaterial->SetTextureProperty("iradianceMap", iradianceMap);
 	// Camera Uniforms
 	// ssrMaterial->SetMatrix4("view", view);
 	ssrMaterial->SetMatrix4("invView", invView);

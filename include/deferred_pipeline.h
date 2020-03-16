@@ -66,4 +66,5 @@ private:
 	// Texture
 	// TODO Use RenderTarget To Generate Radiance Map
 	Texture* radianceMap = nullptr;
+	Texture* iradianceMap = nullptr;
 };
