@@ -32,7 +32,7 @@ uniform Light lights[16];
 const float PI = 3.14159265;
 const float shadowTexelSize = 1.0/1024.0;
 
-vec3 fresnelSchlick(float cosTheta, vec3 F0)
+vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }  
@@ -123,6 +123,10 @@ void main()
     vec2 shadowMapUVRight = vec2(shadowTexelSize, 0.0);
     vec2 shadowMapUVUp = vec2(0.0, shadowTexelSize);
 
+    vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, albedo, metalness);
+
+    vec3 reflectance = vec3(0.0);
     for(int i = 0; i < 4; i++)
     {
         vec3 lightPos = lights[i].Position;
@@ -133,7 +137,7 @@ void main()
         {
             vec3 L = normalize(lightPos - position);
             vec3 R = reflect(-L, N);
-            vec3 H = (V + R) * 0.5;
+            vec3 H = normalize(V + L);
 
             float HDotN = clamp(dot(H, N), 0.0, 1.0);
             float NDotL = clamp(dot(N, L), 0.0, 1.0);    
@@ -175,13 +179,26 @@ void main()
 
             float lightDistance = distance(lightPos, position);
             float falloff = 1.0 / (lightDistance * lightDistance);
+            vec3 radiance = falloff * lightIntensity;
 
-            lambert += (falloff * lightIntensity * albedo / PI);
+            float NDF = DistributionGGX(N, H, roughness);        
+            float G   = GeometrySmith(N, V, L, roughness);      
+            vec3 F    = FresnelSchlick(max(dot(H, V), 0.0), F0);       
+            
+            vec3 kS = F;
+            vec3 kD = vec3(1.0) - kS;
+            kD *= 1.0 - metalness;	  
+            
+            vec3 numerator    = NDF * G * F;
+            float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
+            vec3 specular     = numerator / max(denominator, 0.001);  
+
+            reflectance += (kD * albedo / PI + specular) * radiance;
         }
     }
 
     vec3 environmentLight = albedo * texture(radianceMap ,mat3(invView) * N).rgb;
-    vec3 result = environmentLight + colorFactor * (lambert + specular);
+    vec3 result = colorFactor * reflectance;
 
     outColor = vec4(result, 1.0);
 }
