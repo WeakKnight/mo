@@ -4,6 +4,31 @@
     "children":
     [
         {
+            "name": "goldenSphere",
+            "type": "actor",
+            "layer": "General",
+            "transform":
+            {
+                "position":[8.022, -0.801, 0],
+                "scale":[2.1, 2.1, 2.1],
+                "rotation":[0.0, 0.0, 0.0]
+            },
+            "components":
+            [
+                {
+                    "type": "meshComponent",
+                    "materials": 
+                    [
+                        "demo/gold.json"
+                    ],
+                    "mesh": "sphere.json"
+                }
+            ],
+            "children":
+            [
+            ]
+        },
+        {
             "name": "pillar",
             "type": "actor",
             "layer": "General",
@@ -35,7 +60,7 @@
             "transform":
             {
                 "position":[0.0, -2.571, 0],
-                "scale":[200, 200, 1],
+                "scale":[70, 70, 1],
                 "rotation":[-90.0, 0.0, 0.0]
             },
             "components":

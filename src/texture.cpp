@@ -45,16 +45,23 @@ void Texture::SetData2D(unsigned int width, unsigned int height, int internalFor
     assert(target == GL_TEXTURE_2D);
 
     Bind();
-    glTexImage2D(target, 0, internalFormat, width, height, 0, format, dataType, data);
     
-    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filterMin);
+   
     glTexParameteri(target, GL_TEXTURE_MAG_FILTER, filterMag);
     glTexParameteri(target, GL_TEXTURE_WRAP_S, wrapS);
     glTexParameteri(target, GL_TEXTURE_WRAP_T, wrapT);
 
     if (isMipmapped)
     {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
+       // glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexImage2D(target, 0, internalFormat, width, height, 0, format, dataType, data);
         glGenerateMipmap(target);
+    }
+    else
+    {
+        glTexParameteri(target, GL_TEXTURE_MIN_FILTER, filterMin);
+        glTexImage2D(target, 0, internalFormat, width, height, 0, format, dataType, data);
     }
 
     Unbind();
@@ -90,7 +97,7 @@ void Texture::SetDataCubeMap(unsigned int width, unsigned int height, int intern
 
     if (isMipmapped)
     {
-        glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMin);
         glGenerateMipmap(target);
     }
     else

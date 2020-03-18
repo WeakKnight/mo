@@ -65,6 +65,7 @@ void DeferredPipeline::Init(Camera* camera)
 	// Color
 	RenderTargetDescriptor ssrPassColorAttachment0Descriptor = RenderTargetDescriptor();
 	ssrPassColorAttachment0Descriptor.format = RENDER_TARGET_FORMAT::RGBA16F;
+	ssrPassColorAttachment0Descriptor.mipmap = true;
 
 	ssrPassDescriptors.push_back(ssrPassColorAttachment0Descriptor);
 

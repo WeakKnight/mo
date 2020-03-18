@@ -37,6 +37,11 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }  
 
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
+}   
+
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
     float a      = roughness*roughness;
@@ -61,6 +66,7 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 	
     return num / denom;
 }
+
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
     float NdotV = max(dot(N, V), 0.0);
@@ -193,12 +199,18 @@ void main()
             float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0);
             vec3 specular     = numerator / max(denominator, 0.001);  
 
-            reflectance += (kD * albedo / PI + specular) * radiance;
+            if(dot(N, L) > 0)
+            {
+                reflectance += (kD * albedo / PI + specular) * radiance;
+            }
         }
     }
 
-    vec3 environmentLight = albedo * texture(radianceMap ,mat3(invView) * N).rgb;
-    vec3 result = colorFactor * reflectance;
+    vec3 kSIr = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness); 
+    vec3 kDIr = 1.0 - kSIr;
+
+    vec3 environmentLight = albedo * texture(radianceMap, mat3(invView) * N).rgb;
+    vec3 result = colorFactor * reflectance + kDIr * environmentLight;
 
     outColor = vec4(result, 1.0);
 }

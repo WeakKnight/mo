@@ -1,0 +1,42 @@
+{
+    "name": "carved_pillar",
+    "shader": "deferred-pbr/meshMRT.json",
+    "pass":"deferred",
+    "properties":
+    [
+        {
+            "name": "albedoMap",
+            "type": "sampler2D",
+            "value": "gold/gold_Albedo.json"
+        },
+        {
+            "name": "normalMap",
+            "type": "sampler2D",
+            "value": "gold/gold_Normal.json"
+        },
+        {
+            "name": "metalnessMap",
+            "type": "sampler2D",
+            "value": "gold/gold_Metalness.json"
+        },
+        {
+            "name": "roughnessMap",
+            "type": "sampler2D",
+            "value": "gold/gold_Roughness.json"
+        },
+        {
+            "name": "tillingX",
+            "type": "float",
+            "value": 1.0
+        },
+        {
+            "name": "tillingY",
+            "type": "float",
+            "value": 1.0
+        }
+    ],
+    "extensions":
+    [
+        "mvp"
+    ]
+}
