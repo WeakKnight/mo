@@ -17,7 +17,7 @@
         {
             "name": "metalnessMap",
             "type": "sampler2D",
-            "value": "Dielectric_metallic.json"
+            "value": "gold/gold_Metalness.json"
         },
         {
             "name": "roughnessMap",

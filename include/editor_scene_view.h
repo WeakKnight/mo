@@ -13,7 +13,8 @@ public:
     EditorSceneView(unsigned int initialWidth, unsigned int initialHeight, bool initialOpen, std::string title);
 
     //void SetSceneViewRenderTarget(RenderTarget* renderTarget);
-
+    static bool CameraMoved();
+    static void ClearCameraMoved();
 private:
     virtual void OnIMGUI();
 

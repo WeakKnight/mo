@@ -10,6 +10,7 @@ uniform sampler2D gBufferNormalMetalness;
 uniform sampler2D gBufferAlbedoRoughness;
 // SSR Combine Pass
 uniform sampler2D ssrCombine;
+uniform sampler2D ssrPass;
 uniform samplerCube iradianceMap;
 
 // uniform mat4 view;
@@ -19,6 +20,8 @@ uniform mat4 perspectiveProjection;
 
 // camera space Z
 uniform sampler2D backZPass;
+
+uniform int frameIndex;
 
 const float PI = 3.14159265;
 #define Scale vec3(.8, .8, .8)
@@ -32,6 +35,28 @@ float RadicalInverse_VdC(uint bits)
     bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
     bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
     return float(bits) * 2.3283064365386963e-10; // / 0x100000000
+}
+
+#define coprimes vec2(2,3)
+vec2 halton (vec2 s)
+{
+  vec4 a = vec4(1,1,0,0);
+  while (s.x > 0. && s.y > 0.)
+  {
+    a.xy = a.xy/coprimes;
+    a.zw += a.xy*mod(vec2(s),coprimes);
+    s = floor(s/coprimes);
+  }
+  return a.zw;
+}
+
+void BranchlessONB(in vec3 n, inout vec3 b1, inout vec3 b2)
+{
+	float sign = sign(n.z);
+	float a = -1.0 / (sign + n.z);
+	float b = n.x * n.y * a;
+	b1 = vec3(1.0 + sign * n.x * n.x * a, sign * b, -sign * n.x);
+	b2 = vec3(b, sign + n.y * n.y * a, -n.y);
 }
 
 vec2 Hammersley(uint i, uint N)
@@ -188,8 +213,11 @@ void main()
     vec3 worldR = normalize(mat3(invView) * R);
     
     vec3 result = vec3(0.0, 0.0, 0.0);
+    //
+    int sampledCount = frameIndex * 1;
+
     // reflection raytracing
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < 1; i++)
     {
         // Do Ray Cast
         vec3 origin = position;
@@ -208,15 +236,22 @@ void main()
         F0 = mix(F0, albedo, metalness);
         vec3 Fresnel = fresnelSchlick(NoV, F0);
 
-        vec3 jitt = mix(vec3(0.0), vec3(hash(worldPos + vec3(i))), roughness);
-        vec3 L = normalize(R + jitt);
+        vec2 randomXY = halton(vec2(frameIndex * 1 + i)); 
+
+        vec3 a = vec3(0.0);
+        vec3 b = vec3(0.0);
+        BranchlessONB(R, a, b);
+
+        vec3 jitt = normalize(R + a * randomXY.x * roughness * 0.2 + b * randomXY.y * roughness * 0.2);
+
+        vec3 L = jitt;
         vec3 worldL = normalize(mat3(invView) * L);
 
         float NoL = max(dot(N, L), 0.0);
 
         if(NoL > 0)
         {
-            if (RayCast(origin, L, hitPos, 0.4, 48, 8))
+            if (RayCast(origin, L, hitPos, 0.2, 70, 8))
             {
                 vec2 screenSpaceHitPos = ViewSpaceToScreenSpace(hitPos);
                 if(screenSpaceHitPos.x > 0.0 && screenSpaceHitPos.x < 1.0 && screenSpaceHitPos.y > 0.0 && screenSpaceHitPos.y < 1.0)
@@ -242,6 +277,6 @@ void main()
     // result = vec3(fragUV, 0.0);
     // result = vec3(thickness, 0, 0);
     // result = vec3(ViewSpaceToScreenSpace(position), 0.0);
-    result = result / 8.0;
+    result =  (sampledCount * texture(ssrPass, fragUV).rgb + result) / (1.0 + sampledCount);
     outColor = vec4(colorFactor * result, 1.0);
 }

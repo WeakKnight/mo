@@ -12,6 +12,7 @@
 #include "resources.h"
 #include "light.h"
 #include "texture.h"
+#include "editor_scene_view.h"
 
 void DeferredPipeline::Init(Camera* camera)
 {
@@ -225,6 +226,8 @@ void DeferredPipeline::Render()
 
 void DeferredPipeline::RenderDeferredPass()
 {
+	static int frameIndex = 0;
+
 	Scene* currentScene = Game::ActiveSceneGetPointer();
 
 	std::list<MeshComponent*> meshComponents = ComponentManager::GetInstance()->GetMeshComponents();
@@ -423,7 +426,15 @@ void DeferredPipeline::RenderDeferredPass()
 	// Render SSR Pass
 	cb->SetRenderTarget(ssrPass);
 	cb->SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-	cb->Clear(CLEAR_BIT::COLOR);
+
+	// If Camera Moved, Clear, Frame Index Set To 0
+	if (EditorSceneView::CameraMoved())
+	{
+		cb->Clear(CLEAR_BIT::COLOR);
+		frameIndex = 0;
+		EditorSceneView::ClearCameraMoved();
+	}
+	// Else, Not Clear, Keep Adding Sample
 
 	// G Buffer Uniforms
 	ssrMaterial->SetTextureProperty("gBufferPosition", GetPositionTexture());
@@ -431,12 +442,16 @@ void DeferredPipeline::RenderDeferredPass()
 	ssrMaterial->SetTextureProperty("gBufferAlbedoRoughness", GetAlbedoRoughnessTexture());
 	// SSR Combine Pass Uniform
 	ssrMaterial->SetTextureProperty("ssrCombine", ssrCombinePass->GetAttachmentTexture(0));
+	ssrMaterial->SetTextureProperty("ssrPass", ssrPass->GetAttachmentTexture(0));
 	ssrMaterial->SetTextureProperty("iradianceMap", iradianceMap);
 	// Camera Uniforms
 	// ssrMaterial->SetMatrix4("view", view);
 	ssrMaterial->SetMatrix4("invView", invView);
 	ssrMaterial->SetMatrix4("perspectiveProjection", projection);
 	ssrMaterial->SetTextureProperty("backZPass", backFacePass->GetAttachmentTexture(0));
+	ssrMaterial->SetInt("frameIndex", frameIndex);
+
+	frameIndex++;
 	// ssrMaterial->SetMatrix4("invProjection", invProjection);
 
 	cb->RenderQuad(glm::vec2(0.0f, 0.0f), renderTargetSize, renderTargetProjection, ssrMaterial);

@@ -57,5 +57,5 @@ vec4 smartDeNoise(sampler2D tex, vec2 uv, float sigma, float kSigma, float thres
 
 void main() 
 {
-    outColor =  vec4(smartDeNoise(ssrPass, fragUV, 3.0, 5.7, 0.454).rgb + texture(lightPass, fragUV).rgb, 1.0);
+    outColor =  vec4(texture(ssrPass, fragUV).rgb + texture(lightPass, fragUV).rgb, 1.0);
 }

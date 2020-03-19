@@ -26,6 +26,8 @@ static Camera* cameraCom = nullptr;
 static float yaw = -90.0f;
 static float pitch = 0.0f;
 
+static bool cameraMoved = false;
+
 EditorSceneView::EditorSceneView(unsigned int initialWidth, unsigned int initialHeight, bool initialOpen, std::string title) : EditorWindow(initialWidth, initialHeight, initialOpen, title)
 {    
     sceneCamera = new Actor();
@@ -225,6 +227,16 @@ void EditorSceneView::OnResize()
     Game::MainRenderTargetGetPointer()->Resize(contentSize.x, contentSize.y);
 }
 
+bool EditorSceneView::CameraMoved()
+{
+    return cameraMoved;
+}
+
+void EditorSceneView::ClearCameraMoved()
+{
+    cameraMoved = false;
+}
+
 void EditorSceneView::OnSceneCameraControl()
 {
     auto io = ImGui::GetIO();
@@ -276,6 +288,8 @@ void EditorSceneView::OnSceneCameraControl()
             front.y = sin(glm::radians(pitch));
             front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
             cameraCom->cameraFront = glm::normalize(front);
+
+            cameraMoved = true;
         }
 
         if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
@@ -285,18 +299,22 @@ void EditorSceneView::OnSceneCameraControl()
             if (Input::GetKeyState(KEYBOARD_KEY::W) == KEY_STATE::PRESS)
             {
                 sceneCamera->Translate(cameraCom->cameraFront * cameraSpeed);
+                cameraMoved = true;
             }
             if (Input::GetKeyState(KEYBOARD_KEY::S) == KEY_STATE::PRESS)
             {
                 sceneCamera->Translate(-cameraCom->cameraFront * cameraSpeed);
+                cameraMoved = true;
             }
             if (Input::GetKeyState(KEYBOARD_KEY::D) == KEY_STATE::PRESS)
             {
                 sceneCamera->Translate(glm::normalize(glm::cross(cameraCom->cameraFront, cameraCom->cameraUp)) * cameraSpeed);
+                cameraMoved = true;
             }
             if (Input::GetKeyState(KEYBOARD_KEY::A) == KEY_STATE::PRESS)
             {
                 sceneCamera->Translate(-glm::normalize(glm::cross(cameraCom->cameraFront, cameraCom->cameraUp)) * cameraSpeed);
+                cameraMoved = true;
             }
         }
     }
