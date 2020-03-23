@@ -52,6 +52,6 @@ void main()
 
     // Displace the vertex along the normal
     float Displacement = texture(displacementMap, uvFS.xy).x;
-    positionCameraSpaceFS += normalCameraSpaceFS * Displacement * 1.65;
+    positionCameraSpaceFS += normalCameraSpaceFS * Displacement * 0.35;
     gl_Position = tesProjection * vec4(positionCameraSpaceFS, 1.0);
 }
