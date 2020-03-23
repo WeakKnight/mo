@@ -26,7 +26,9 @@ void DeferredPipeline::Init(Camera* camera)
 	ssrCombineMaterial = Resources::GetMaterial("ssrCombine.json");
 	backFaceMaterial = Resources::GetMaterial("meshDepth.json");
 	shadowMapMaterial = Resources::GetMaterial("shadowMap.json");
+	shadowMapTessMaterial = Resources::GetMaterial("shadowMapTess.json");
 	linesMaterial = Resources::GetMaterial("lines.json");
+	linesTessMaterial = Resources::GetMaterial("meshTessMRTLines.json");
 
 	// CreateGBuffer
 	std::vector<RenderTargetDescriptor> gBufferDescriptors;
@@ -190,7 +192,16 @@ void DeferredPipeline::BakeShadowMap()
 							continue;
 						}
 
-						cb->RenderMeshMVP( shadowMapMaterial, mesh->children[i], transformation, lightView, lightProjection);
+						if (material->HasTess())
+						{
+							shadowMapTessMaterial->SetMatrix4("tesProjection", lightProjection);
+							shadowMapTessMaterial->SetTextureProperty("displacementMap", material->GetDisplacementTexture());
+							cb->RenderMeshMVP(shadowMapTessMaterial, mesh->children[i], transformation, lightView, lightProjection);
+						}
+						else
+						{
+							cb->RenderMeshMVP(shadowMapMaterial, mesh->children[i], transformation, lightView, lightProjection);
+						}
 					}
 				}
 			}
@@ -289,7 +300,22 @@ void DeferredPipeline::RenderDeferredPass()
 				continue;
 			}
 
+			if (material->HasTess())
+			{
+				material->SetMatrix4("tesProjection", projection);
+			}
 			cb->RenderMesh(camera, material, mesh->children[i], transformation);
+			
+			if (material->HasTess() && showWiredFrame)
+			{
+				linesTessMaterial->SetMatrix4("tesProjection", projection);
+				linesTessMaterial->SetTextureProperty("normalMap", material->GetNormalTexture());
+				linesTessMaterial->SetTextureProperty("displacementMap", material->GetDisplacementTexture());
+				linesTessMaterial->SetFloat("tillingX", material->GetTillingX());
+				linesTessMaterial->SetFloat("tillingY", material->GetTillingY());
+
+				cb->RenderMesh(camera, linesTessMaterial, mesh->children[i], transformation);
+			}
 		}
 	}
 
@@ -487,6 +513,8 @@ void DeferredPipeline::RenderForwardPass()
 
 	auto cb = Game::GetCommandBuffer();
 
+	auto viewProjection = camera->GetViewMatrix() * camera->GetProjection();
+
 	if (camera->hasPostProcessing)
 	{
 		cb->SetRenderTarget(hdrTarget);
@@ -549,25 +577,40 @@ void DeferredPipeline::RenderForwardPass()
 		}
 	}
 
-	for (auto meshComponent : meshComponents)
+	if (showWiredFrame)
 	{
-		auto materials = meshComponent->materials;
-
-		Mesh* mesh = meshComponent->mesh;
-		assert(mesh != nullptr);
-
-		glm::mat4 transformation = meshComponent->GetOwner()->GetLocalToWorldMatrix();
-
-		for (int i = 0; i < mesh->children.size(); i++)
+		for (auto meshComponent : meshComponents)
 		{
-			Material* material = linesMaterial;
+			auto materials = meshComponent->materials;
 
-			if (material->GetPass() != MATERIAL_PASS::FORWARD)
+			Mesh* mesh = meshComponent->mesh;
+			assert(mesh != nullptr);
+
+			glm::mat4 transformation = meshComponent->GetOwner()->GetLocalToWorldMatrix();
+
+			for (int i = 0; i < mesh->children.size(); i++)
 			{
-				continue;
-			}
+				Material* material = nullptr;
+				if (i >= materials.size())
+				{
+					material = materials[0];
+				}
+				else
+				{
+					material = materials[i];
+				}
+				
+				Material* renderMaterial = linesMaterial;
+				if (material->HasTess())
+				{
+					renderMaterial = linesTessMaterial;
+					renderMaterial->SetTextureProperty("displacementMap", material->GetDisplacementTexture());
+					renderMaterial->SetMatrix4("tesViewProjection", viewProjection);
+					assert(renderMaterial->HasTess());
+				}
 
-			cb->RenderMesh(camera, material, mesh->children[i], transformation);
+				cb->RenderMesh(camera, renderMaterial, mesh->children[i], transformation);
+			}
 		}
 	}
 

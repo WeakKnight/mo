@@ -2,16 +2,16 @@
     "name":"default",
     "amibent":[0.1, 0.1, 0.1],
     "children":
-    [
+    [        
         {
-            "name": "goldenSphere",
+            "name": "tessTest",
             "type": "actor",
             "layer": "General",
             "transform":
             {
-                "position":[8.022, -0.801, 0],
+                "position":[8.022, -2.565, 0],
                 "scale":[2.1, 2.1, 2.1],
-                "rotation":[0.0, 0.0, 0.0]
+                "rotation":[90.0, 0.0, 180.0]
             },
             "components":
             [
@@ -19,9 +19,9 @@
                     "type": "meshComponent",
                     "materials": 
                     [
-                        "demo/gold.json"
+                        "demo/tess_test.json"
                     ],
-                    "mesh": "sphere.json"
+                    "mesh": "plane.json"
                 }
             ],
             "children":

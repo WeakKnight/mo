@@ -1,0 +1,41 @@
+#version 420 core
+
+// Thre Control Points
+layout (vertices = 3) out;
+
+in vec2 uv[];
+// CameraSapce
+in vec3 positionCameraSpace[];
+// CameraSapce
+in vec3 normalCameraSpace[];
+// CameraSapce
+in vec3 tangentCameraSpace[];
+// CameraSapce
+in vec3 bitangentCameraSpace[];
+
+
+out vec2 uvES[];
+// CameraSapce
+out vec3 positionCameraSpaceES[];
+// CameraSapce
+out vec3 normalCameraSpaceES[];
+// CameraSapce
+out vec3 tangentCameraSpaceES[];
+// CameraSapce
+out vec3 bitangentCameraSpaceES[];
+
+void main()
+{
+    // Set the control points of the output patch
+    uvES[gl_InvocationID] = uv[gl_InvocationID];
+    positionCameraSpaceES[gl_InvocationID] = positionCameraSpace[gl_InvocationID];
+    normalCameraSpaceES[gl_InvocationID] = normalCameraSpace[gl_InvocationID];
+    tangentCameraSpaceES[gl_InvocationID] = tangentCameraSpace[gl_InvocationID];
+    bitangentCameraSpaceES[gl_InvocationID] = bitangentCameraSpace[gl_InvocationID];
+
+    // Calculate the tessellation levels
+    gl_TessLevelOuter[0] = 3000;
+    gl_TessLevelOuter[1] = 3000;
+    gl_TessLevelOuter[2] = 3000;
+    gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+}

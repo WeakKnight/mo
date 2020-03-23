@@ -1,18 +1,18 @@
 {
-    "name": "carved_pillar",
-    "shader": "deferred-pbr/meshMRT.json",
+    "name": "tess_test",
+    "shader": "deferred-pbr/meshTessMRT.json",
     "pass":"deferred",
     "properties":
     [
         {
             "name": "albedoMap",
             "type": "sampler2D",
-            "value": "marble-floor/floor_marble_Albedo.json"
+            "value": "soil-mud/soil_mud_Albedo.json"
         },
         {
             "name": "normalMap",
             "type": "sampler2D",
-            "value": "marble-floor/floor_marble_Normal.json"
+            "value": "tess-test/teapot_normal.json"
         },
         {
             "name": "metalnessMap",
@@ -25,14 +25,19 @@
             "value": "marble-floor/floor_marble_Roughness.json"
         },
         {
+            "name": "displacementMap",
+            "type": "sampler2D",
+            "value": "marble-floor/floor_marble_Displacement.json"
+        },
+        {
             "name": "tillingX",
             "type": "float",
-            "value": 6.0
+            "value": 1.0
         },
         {
             "name": "tillingY",
             "type": "float",
-            "value": 6.0
+            "value": 1.0
         }
     ],
     "extensions":

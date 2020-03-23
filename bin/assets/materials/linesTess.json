@@ -1,0 +1,12 @@
+{
+    "name": "linesTess",
+    "shader": "linesTess.json",
+    "pass":"forward",
+    "properties":
+    [
+    ],
+    "extensions":
+    [
+        "mvp"
+    ]
+}

@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #endif
 
-void Shader::Init(std::string name, std::string vertCode, std::string fragmentCode, std::string geomCode)
+void Shader::Init(std::string name, std::string vertCode, std::string fragmentCode, std::string geomCode, std::string tcsCode, std::string tesCode)
 {
     this->name = name;
     unsigned int vShader = glCreateShader(GL_VERTEX_SHADER);
@@ -15,6 +15,19 @@ void Shader::Init(std::string name, std::string vertCode, std::string fragmentCo
     if (hasGeom)
     {
         gShader = glCreateShader(GL_GEOMETRY_SHADER);
+    }
+
+    hasTess = tcsCode.size() > 0;
+    
+    unsigned int tcsShader = 0;
+    unsigned int tesShader = 0;
+
+    if (hasTess)
+    {
+        assert(tesCode.size() > 0);
+
+        tcsShader = glCreateShader(GL_TESS_CONTROL_SHADER);
+        tesShader = glCreateShader(GL_TESS_EVALUATION_SHADER);
     }
 
     ID = glCreateProgram();
@@ -60,6 +73,31 @@ void Shader::Init(std::string name, std::string vertCode, std::string fragmentCo
         glAttachShader(ID, gShader);
     }
 
+    if (hasTess)
+    {
+        const char* tcsSource = tcsCode.c_str();
+        glShaderSource(tcsShader, 1, &tcsSource, nullptr);
+        glCompileShader(tcsShader);
+        glGetShaderiv(tcsShader, GL_COMPILE_STATUS, &status);
+        if (!status)
+        {
+            glGetShaderInfoLog(tcsShader, sizeof(logInfo), nullptr, logInfo);
+            spdlog::info("tcs shader compile error: {}", logInfo);
+        }
+        glAttachShader(ID, tcsShader);
+
+        const char* tesSource = tesCode.c_str();
+        glShaderSource(tesShader, 1, &tesSource, nullptr);
+        glCompileShader(tesShader);
+        glGetShaderiv(tesShader, GL_COMPILE_STATUS, &status);
+        if (!status)
+        {
+            glGetShaderInfoLog(tesShader, sizeof(logInfo), nullptr, logInfo);
+            spdlog::info("tes shader compile error: {}", logInfo);
+        }
+        glAttachShader(ID, tesShader);
+    }
+
     glLinkProgram(ID);
 
     glGetProgramiv(ID, GL_LINK_STATUS, &status);
@@ -71,9 +109,16 @@ void Shader::Init(std::string name, std::string vertCode, std::string fragmentCo
 
     glDeleteShader(vShader);
     glDeleteShader(fShader);
+
     if (hasGeom)
     {
         glDeleteShader(gShader);
+    }
+
+    if (hasTess)
+    {
+        glDeleteShader(tcsShader);
+        glDeleteShader(tesShader);
     }
 
     int uniformCount;

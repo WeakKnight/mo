@@ -1,0 +1,7 @@
+{
+    "name":"meshTessMRT",
+    "vert":"deferred-pbr/meshTessMRT.vert",
+    "frag":"deferred-pbr/meshTessMRT.frag",
+    "tcs":"deferred-pbr/meshMRT.tcs",
+    "tes":"deferred-pbr/meshMRT.tes"
+}

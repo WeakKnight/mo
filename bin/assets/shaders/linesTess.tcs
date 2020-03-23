@@ -1,0 +1,25 @@
+#version 420 core
+
+layout (vertices = 3) out;
+
+in vec3 positionVert[];
+in vec3 normalVert[];
+in vec2 UVVert[];
+
+out vec3 positionES[];
+out vec3 normalES[];
+out vec2 UVES[];
+
+void main()
+{
+    // Set the control points of the output patch
+    positionES[gl_InvocationID] = positionVert[gl_InvocationID];
+    normalES[gl_InvocationID] = normalVert[gl_InvocationID];
+    UVES[gl_InvocationID] = UVVert[gl_InvocationID];
+
+    // Calculate the tessellation levels
+    gl_TessLevelOuter[0] = 3000.0;
+    gl_TessLevelOuter[1] = 3000.0;
+    gl_TessLevelOuter[2] = 3000.0;
+    gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+}

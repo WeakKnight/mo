@@ -1,0 +1,7 @@
+{
+    "name":"shadowMapTess",
+    "vert":"deferred-pbr/shadowMapTess.vert",
+    "frag":"deferred-pbr/shadowMapTess.frag",
+    "tcs":"deferred-pbr/shadowMapTess.tcs",
+    "tes":"deferred-pbr/shadowMapTess.tes"
+}

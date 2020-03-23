@@ -1,0 +1,13 @@
+{
+    "name": "shadowMapTess",
+    "shader": "deferred-pbr/shadowMapTess.json",
+    "pass":"deferred",
+    "properties":
+    [
+    ],
+    "extensions":
+    [
+        "mvp"
+    ]
+}
+

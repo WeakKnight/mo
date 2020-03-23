@@ -84,3 +84,8 @@ void Material::Use()
 		unitIndex += 1;
 	}
 }
+
+bool Material::HasTess() const
+{
+	return shader->GetHasTess();
+}

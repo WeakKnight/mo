@@ -31,6 +31,8 @@ public:
 	// 0 ---- without debug
 	int debugOption = 0;
 
+	bool showWiredFrame = false;
+
 private:
 	bool baked = false;
 
@@ -49,9 +51,11 @@ private:
 
 	// Shadow Map Material
 	Material* shadowMapMaterial = nullptr;
-
+	Material* shadowMapTessMaterial = nullptr;
+	
 	// Wired Frame Material
 	Material* linesMaterial = nullptr;
+	Material* linesTessMaterial = nullptr;
 	
 	// Deferred Pass
 	RenderTarget* gBuffer = nullptr;

@@ -1,0 +1,8 @@
+{
+    "name":"meshTessMRTLines",
+    "vert":"deferred-pbr/meshTessMRT.vert",
+    "frag":"deferred-pbr/meshTessMRTLines.frag",
+    "tcs":"deferred-pbr/meshMRTLines.tcs",
+    "tes":"deferred-pbr/meshMRTLines.tes",
+    "geom":"linesTess.geom"
+}

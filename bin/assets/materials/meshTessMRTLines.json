@@ -1,0 +1,12 @@
+{
+    "name": "tess_test",
+    "shader": "deferred-pbr/meshTessMRTLines.json",
+    "pass":"deferred",
+    "properties":
+    [
+    ],
+    "extensions":
+    [
+        "mvp"
+    ]
+}

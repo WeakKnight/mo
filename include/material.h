@@ -32,6 +32,26 @@ public:
 	void SetVector3(const std::string& propName, glm::vec3& value);
 	void SetUniformBlock(const std::string& location, int index);
 
+	Texture* GetDisplacementTexture()
+	{
+		return textureProperties["displacementMap"];
+	}
+
+	Texture* GetNormalTexture()
+	{
+		return textureProperties["normalMap"];
+	}
+
+	float GetTillingX()
+	{
+		return floatProperties["tillingX"];
+	}
+
+	float GetTillingY()
+	{
+		return floatProperties["tillingY"];
+	}
+
 	void Use();
 
 	void AddExtension(MATERIAL_EXTENSION extension)
@@ -53,6 +73,8 @@ public:
 	{
 		this->pass = pass;
 	}
+
+	bool HasTess() const;
 
 public:
 	std::string GetName()

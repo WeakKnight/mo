@@ -1,0 +1,8 @@
+{
+    "name":"linesTess",
+    "vert":"linesTess.vert",
+    "frag":"linesTess.frag",
+    "geom":"linesTess.geom",
+    "tcs":"linesTess.tcs",
+    "tes":"linesTess.tes"
+}

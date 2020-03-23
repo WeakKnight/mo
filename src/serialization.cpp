@@ -388,7 +388,19 @@ namespace Serialization
 			std::string geomPath = shaderJsonObject["geom"].get<std::string>();
 			geomCode = StringUtils::ReadFile("shaders/" + geomPath);
 		}
-		shader->Init(name, vertCode, fragCode, geomCode);
+
+		std::string tcsCode = "";
+		std::string tesCode = "";
+
+		if (shaderJsonObject.find("tcs") != shaderJsonObject.end() &&  shaderJsonObject.find("tes") != shaderJsonObject.end())
+		{
+			std::string tcsPath = shaderJsonObject["tcs"].get<std::string>();
+			tcsCode = StringUtils::ReadFile("shaders/" + tcsPath);
+
+			std::string tesPath = shaderJsonObject["tes"].get<std::string>();
+			tesCode = StringUtils::ReadFile("shaders/" + tesPath);
+		}
+		shader->Init(name, vertCode, fragCode, geomCode, tcsCode, tesCode);
 
 		return shader;
 	}

@@ -209,7 +209,7 @@ void main()
     vec3 kSIr = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness); 
     vec3 kDIr = 1.0 - kSIr;
 
-    vec3 environmentLight = albedo * texture(radianceMap, mat3(invView) * N).rgb;
+    vec3 environmentLight = 0.2 * albedo * texture(radianceMap, mat3(invView) * N).rgb;
     vec3 result = colorFactor * reflectance + kDIr * environmentLight;
 
     outColor = vec4(result, 1.0);

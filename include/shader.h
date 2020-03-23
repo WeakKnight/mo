@@ -11,7 +11,7 @@ struct UniformInfo
 class Shader
 {
 public:
-    void Init(std::string name, std::string vertCode, std::string fragmentCode, std::string geomCode = "");
+    void Init(std::string name, std::string vertCode, std::string fragmentCode, std::string geomCode = "", std::string tcsCode = "", std::string tesCode = "");
     void Use();
 
     void SetInt(std::string location, int value);
@@ -40,7 +40,13 @@ public:
         name = newName;
     }
 
+    bool GetHasTess() const
+    {
+        return hasTess;
+    }
+
 private:
+    bool hasTess = false;
     unsigned int ID;
     std::string name = "";
     std::map<std::string, UniformInfo> uniforms;

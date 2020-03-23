@@ -80,6 +80,7 @@ CommandBuffer::CommandBuffer()
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
 	spdlog::info("GL Version Is {}", glVersion);
 
@@ -363,7 +364,14 @@ void CommandBuffer::Submit()
 			material->Use();
 
 			mesh->vertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+			if (material->HasTess())
+			{
+				glDrawElements(GL_PATCHES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+			}
+			else
+			{
+				glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+			}
 			mesh->vertexArray->UnBind();
 		}
 			break;
@@ -379,7 +387,14 @@ void CommandBuffer::Submit()
 			material->Use();
 
 			mesh->vertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+			if (material->HasTess())
+			{
+				glDrawElements(GL_PATCHES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+			}
+			else
+			{
+				glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+			}
 			mesh->vertexArray->UnBind();
 		}
 		break;

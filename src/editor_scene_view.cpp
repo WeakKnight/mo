@@ -89,6 +89,9 @@ void EditorSceneView::OnIMGUI()
     static bool guizmoOpen = false;
     ImGui::Checkbox("Guizmo", &guizmoOpen);
 
+    ImGui::SameLine();
+    ImGui::Checkbox("Wired Frame", &pipleLine->showWiredFrame);
+
     auto projection = cameraCom->GetProjection();
     auto view = cameraCom->GetViewMatrix();
 
