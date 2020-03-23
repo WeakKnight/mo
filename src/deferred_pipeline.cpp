@@ -26,6 +26,7 @@ void DeferredPipeline::Init(Camera* camera)
 	ssrCombineMaterial = Resources::GetMaterial("ssrCombine.json");
 	backFaceMaterial = Resources::GetMaterial("meshDepth.json");
 	shadowMapMaterial = Resources::GetMaterial("shadowMap.json");
+	linesMaterial = Resources::GetMaterial("lines.json");
 
 	// CreateGBuffer
 	std::vector<RenderTargetDescriptor> gBufferDescriptors;
@@ -538,6 +539,28 @@ void DeferredPipeline::RenderForwardPass()
 			{
 				material = materials[i];
 			}
+
+			if (material->GetPass() != MATERIAL_PASS::FORWARD)
+			{
+				continue;
+			}
+
+			cb->RenderMesh(camera, material, mesh->children[i], transformation);
+		}
+	}
+
+	for (auto meshComponent : meshComponents)
+	{
+		auto materials = meshComponent->materials;
+
+		Mesh* mesh = meshComponent->mesh;
+		assert(mesh != nullptr);
+
+		glm::mat4 transformation = meshComponent->GetOwner()->GetLocalToWorldMatrix();
+
+		for (int i = 0; i < mesh->children.size(); i++)
+		{
+			Material* material = linesMaterial;
 
 			if (material->GetPass() != MATERIAL_PASS::FORWARD)
 			{

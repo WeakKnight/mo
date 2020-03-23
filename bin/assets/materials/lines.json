@@ -1,0 +1,12 @@
+{
+    "name": "lines",
+    "shader": "lines.json",
+    "pass":"forward",
+    "properties":
+    [
+    ],
+    "extensions":
+    [
+        "mvp"
+    ]
+}

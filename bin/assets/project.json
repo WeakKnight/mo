@@ -13,7 +13,8 @@
         "ssr.json",
         "ssrCombine.json",
         "meshDepth.json",
-        "shadowMap.json"
+        "shadowMap.json",
+        "lines.json"
     ],
     "layers": [
         {

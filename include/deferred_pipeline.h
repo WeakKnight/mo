@@ -49,6 +49,9 @@ private:
 
 	// Shadow Map Material
 	Material* shadowMapMaterial = nullptr;
+
+	// Wired Frame Material
+	Material* linesMaterial = nullptr;
 	
 	// Deferred Pass
 	RenderTarget* gBuffer = nullptr;

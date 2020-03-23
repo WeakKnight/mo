@@ -381,7 +381,14 @@ namespace Serialization
 		std::string vertCode = StringUtils::ReadFile("shaders/" + vertPath);
 		std::string fragPath = shaderJsonObject["frag"].get<std::string>();
 		std::string fragCode = StringUtils::ReadFile("shaders/" + fragPath);
-		shader->Init(name, vertCode, fragCode);
+
+		std::string geomCode = "";
+		if (shaderJsonObject.find("geom") != shaderJsonObject.end())
+		{
+			std::string geomPath = shaderJsonObject["geom"].get<std::string>();
+			geomCode = StringUtils::ReadFile("shaders/" + geomPath);
+		}
+		shader->Init(name, vertCode, fragCode, geomCode);
 
 		return shader;
 	}

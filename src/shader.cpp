@@ -3,11 +3,19 @@
 #include <glad/glad.h>
 #endif
 
-void Shader::Init(std::string name, std::string vertCode, std::string fragmentCode)
+void Shader::Init(std::string name, std::string vertCode, std::string fragmentCode, std::string geomCode)
 {
     this->name = name;
     unsigned int vShader = glCreateShader(GL_VERTEX_SHADER);
     unsigned int fShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    bool hasGeom = geomCode.size() > 0;
+
+    unsigned int gShader = 0;
+    if (hasGeom)
+    {
+        gShader = glCreateShader(GL_GEOMETRY_SHADER);
+    }
 
     ID = glCreateProgram();
 
@@ -37,6 +45,21 @@ void Shader::Init(std::string name, std::string vertCode, std::string fragmentCo
 
     glAttachShader(ID, vShader);
     glAttachShader(ID, fShader);
+
+    if (hasGeom)
+    {
+        const char* geomSource = geomCode.c_str();
+        glShaderSource(gShader, 1, &geomSource, nullptr);
+        glCompileShader(gShader);
+        glGetShaderiv(gShader, GL_COMPILE_STATUS, &status);
+        if (!status)
+        {
+            glGetShaderInfoLog(gShader, sizeof(logInfo), nullptr, logInfo);
+            spdlog::info("geom shader compile error: {}", logInfo);
+        }
+        glAttachShader(ID, gShader);
+    }
+
     glLinkProgram(ID);
 
     glGetProgramiv(ID, GL_LINK_STATUS, &status);
@@ -48,6 +71,10 @@ void Shader::Init(std::string name, std::string vertCode, std::string fragmentCo
 
     glDeleteShader(vShader);
     glDeleteShader(fShader);
+    if (hasGeom)
+    {
+        glDeleteShader(gShader);
+    }
 
     int uniformCount;
     

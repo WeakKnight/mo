@@ -23,6 +23,8 @@ uniform sampler2D backZPass;
 
 uniform int frameIndex;
 
+const int iterationCount = 16;
+
 const float PI = 3.14159265;
 #define Scale vec3(.8, .8, .8)
 #define K 19.19
@@ -214,69 +216,69 @@ void main()
     
     vec3 result = vec3(0.0, 0.0, 0.0);
     //
-    int sampledCount = frameIndex * 1;
+    int sampledCount = frameIndex * iterationCount;
 
     // reflection raytracing
-    for(int i = 0; i < 1; i++)
-    {
-        // Do Ray Cast
-        vec3 origin = position;
-        // Perfect Reflection
-        vec3 hitPos;
+    // for(int i = 0; i < iterationCount; i++)
+    // {
+    //     // Do Ray Cast
+    //     vec3 origin = position;
+    //     // Perfect Reflection
+    //     vec3 hitPos;
         
-        vec3 H = normalize(V + R);
+    //     vec3 H = normalize(V + R);
         
-        float NoV = clamp(dot(N, V), 0.0, 1.0);
-        float NoH = clamp(dot(N, H), 0.0, 1.0);
-        float VoH = clamp(dot(N, V), 0.0, 1.0);
+    //     float NoV = clamp(dot(N, V), 0.0, 1.0);
+    //     float NoH = clamp(dot(N, H), 0.0, 1.0);
+    //     float VoH = clamp(dot(N, V), 0.0, 1.0);
 
-        vec3 SampleColor = vec3(0.0);
+    //     vec3 SampleColor = vec3(0.0);
 
-        vec3 F0 = vec3(0.04); 
-        F0 = mix(F0, albedo, metalness);
-        vec3 Fresnel = fresnelSchlick(NoV, F0);
+    //     vec3 F0 = vec3(0.04); 
+    //     F0 = mix(F0, albedo, metalness);
+    //     vec3 Fresnel = fresnelSchlick(NoV, F0);
 
-        vec2 randomXY = halton(vec2(frameIndex * 1 + i)); 
+    //     vec2 randomXY = halton(vec2(sampledCount + i)); 
 
-        vec3 a = vec3(0.0);
-        vec3 b = vec3(0.0);
-        BranchlessONB(R, a, b);
+    //     vec3 a = vec3(0.0);
+    //     vec3 b = vec3(0.0);
+    //     BranchlessONB(R, a, b);
 
-        vec3 jitt = normalize(R + a * randomXY.x * roughness * 0.2 + b * randomXY.y * roughness * 0.2);
+    //     vec3 jitt = normalize(R + a * randomXY.x * roughness * 0.2 + b * randomXY.y * roughness * 0.2);
 
-        vec3 L = jitt;
-        vec3 worldL = normalize(mat3(invView) * L);
+    //     vec3 L = jitt;
+    //     vec3 worldL = normalize(mat3(invView) * L);
 
-        float NoL = max(dot(N, L), 0.0);
+    //     float NoL = max(dot(N, L), 0.0);
 
-        if(NoL > 0)
-        {
-            if (RayCast(origin, L, hitPos, 0.2, 70, 8))
-            {
-                vec2 screenSpaceHitPos = ViewSpaceToScreenSpace(hitPos);
-                if(screenSpaceHitPos.x > 0.0 && screenSpaceHitPos.x < 1.0 && screenSpaceHitPos.y > 0.0 && screenSpaceHitPos.y < 1.0)
-                {
-                    // vec3 hitPosNormal = texture(gBufferNormalMetalness, screenSpaceHitPos).rgb;                        
-                    SampleColor = texture(ssrCombine, screenSpaceHitPos).rgb;
-                }
-                else
-                {
-                    SampleColor = texture(iradianceMap, worldL).rgb;
-                }
-            }
-            // Fallback To Radiance Map
-            else
-            {
-                SampleColor = texture(iradianceMap, worldL).rgb;
-            }
+    //     if(NoL > 0)
+    //     {
+    //         if (RayCast(origin, L, hitPos, 0.2, 70, 8))
+    //         {
+    //             vec2 screenSpaceHitPos = ViewSpaceToScreenSpace(hitPos);
+    //             if(screenSpaceHitPos.x > 0.0 && screenSpaceHitPos.x < 1.0 && screenSpaceHitPos.y > 0.0 && screenSpaceHitPos.y < 1.0)
+    //             {
+    //                 // vec3 hitPosNormal = texture(gBufferNormalMetalness, screenSpaceHitPos).rgb;                        
+    //                 SampleColor = texture(ssrCombine, screenSpaceHitPos).rgb;
+    //             }
+    //             else
+    //             {
+    //                 SampleColor = texture(iradianceMap, worldL).rgb;
+    //             }
+    //         }
+    //         // Fallback To Radiance Map
+    //         else
+    //         {
+    //             SampleColor = texture(iradianceMap, worldL).rgb;
+    //         }
 
-            result += ( SampleColor * Fresnel);
-        }
-    }
+    //         result += ( SampleColor * Fresnel);
+    //     }
+    // }
 
-    // result = vec3(fragUV, 0.0);
-    // result = vec3(thickness, 0, 0);
-    // result = vec3(ViewSpaceToScreenSpace(position), 0.0);
-    result =  (sampledCount * texture(ssrPass, fragUV).rgb + result) / (1.0 + sampledCount);
+    // // result = vec3(fragUV, 0.0);
+    // // result = vec3(thickness, 0, 0);
+    // // result = vec3(ViewSpaceToScreenSpace(position), 0.0);
+    // result =  (sampledCount * texture(ssrPass, fragUV).rgb + result) / (iterationCount + sampledCount);
     outColor = vec4(colorFactor * result, 1.0);
 }

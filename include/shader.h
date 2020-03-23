@@ -11,7 +11,7 @@ struct UniformInfo
 class Shader
 {
 public:
-    void Init(std::string name, std::string vertCode, std::string fragmentCode);
+    void Init(std::string name, std::string vertCode, std::string fragmentCode, std::string geomCode = "");
     void Use();
 
     void SetInt(std::string location, int value);

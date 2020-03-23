@@ -1,0 +1,6 @@
+{
+    "name":"lines",
+    "vert":"lines.vert",
+    "frag":"lines.frag",
+    "geom":"lines.geom"
+}
