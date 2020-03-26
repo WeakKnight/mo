@@ -9,9 +9,9 @@
             "layer": "General",
             "transform":
             {
-                "position":[8.022, -2.565, 0],
+                "position":[5.635, 0.403, 2.233],
                 "scale":[2.1, 2.1, 2.1],
-                "rotation":[90.0, 0.0, 180.0]
+                "rotation":[0.0, 35.0, 0.0]
             },
             "components":
             [
